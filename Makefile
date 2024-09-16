@@ -24,7 +24,7 @@ docker-clean:
 
 .PHONY: docker-compose-up
 docker-compose-up:
-	docker compose up --build --remove-orphans  --force-recreate
+	docker compose up --build --remove-orphans  --force-recreate --wait
 
 .PHONY: docker-compose-down
 docker-compose-down:

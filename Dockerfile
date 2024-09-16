@@ -1,4 +1,6 @@
 FROM ubuntu:22.04
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt update && apt install -y ca-certificates
 
 ARG BUILD_DATA=build-data
 ENV APP_CONFIG=app-config.yml
