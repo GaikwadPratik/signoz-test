@@ -78,7 +78,7 @@ func ConfigureLogger(config ConfigLogger) *slog.Logger {
 		return a
 	}
 
-	opttions := &slog.HandlerOptions{
+	options := &slog.HandlerOptions{
 		Level:       config.LogLevel,
 		ReplaceAttr: replacer,
 		AddSource:   true,
@@ -96,7 +96,7 @@ func ConfigureLogger(config ConfigLogger) *slog.Logger {
 		slog.String("name", config.ProcessTitle),
 	}
 
-	return slog.New(slog.NewJSONHandler(os.Stderr, opttions).WithAttrs(logAttribs))
+	return slog.New(slog.NewJSONHandler(os.Stderr, options).WithAttrs(logAttribs))
 }
 
 // bunyanLevel maps slog levels to Bunyan levels

@@ -5,6 +5,7 @@ package cmd
 
 import (
 	"context"
+	"log"
 	"log/slog"
 	"os"
 	"strings"
@@ -28,9 +29,9 @@ var (
 	cfgFile  string
 	logLevel = &slog.LevelVar{}
 
-	serviceName  = os.Getenv("OTEL_SERVICE_NAME")
+	serviceName  = os.Getenv("SERVICE_NAME")
 	collectorURL = os.Getenv("OTEL_EXPORTER_OTLP_ENDPOINT")
-	insecure     = os.Getenv("OTEL_EXPORTER_OTLP_INSECURE")
+	insecure     = os.Getenv("INSECURE_MODE")
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -81,6 +82,9 @@ func initConfig() {
 
 	slog.SetDefault(logger)
 	slog.Info("logging configured")
+
+	// if we crash the go code, we get the file name and line number
+	log.SetFlags(log.LstdFlags | log.Lshortfile)
 
 	if len(cfgFile) > 0 {
 		// Use config file from the flag
