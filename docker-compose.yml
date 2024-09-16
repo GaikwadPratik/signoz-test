@@ -1,0 +1,37 @@
+services:
+  app:
+    build: .
+    ports:
+      - "80:80"
+    environment:
+      - OTEL_TRACES_EXPORTER=otlp
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4317
+      - OTEL_NODE_RESOURCE_DETECTORS=env,host,os
+      - OTEL_SERVICE_NAME=app-service
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/localzone:/etc/localzone:ro
+    depends_on:
+      - otel-collector
+    networks:
+      - app-network
+
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:latest
+    command: ["--config", "/etc/otel-collector-config.yaml"]
+    volumes:
+      - ./otel-collector-config.yaml:/etc/otel-collector-config.yaml:ro
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/localzone:/etc/localzone:ro
+    ports:
+      - "4317:4317"
+      - "4318:4318"
+      - "8888:8888"
+    environment:
+      - OTEL_EXPORTER_OTLP_ENDPOINT=10.211.55.4:4318
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    enable_ipv6: false

@@ -1,0 +1,8 @@
+webserver:
+  port: 80
+  timeouts:
+    startwait: 2s
+    graceful: 2s
+    write: 2s
+    read: 2s
+    idle: 2s
