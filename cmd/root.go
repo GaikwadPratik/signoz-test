@@ -28,9 +28,9 @@ var (
 	cfgFile  string
 	logLevel = &slog.LevelVar{}
 
-	serviceName  = os.Getenv("SERVICE_NAME")
+	serviceName  = os.Getenv("OTEL_SERVICE_NAME")
 	collectorURL = os.Getenv("OTEL_EXPORTER_OTLP_ENDPOINT")
-	insecure     = os.Getenv("INSECURE_MODE")
+	insecure     = os.Getenv("OTEL_EXPORTER_OTLP_INSECURE")
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -112,8 +112,6 @@ func initConfig() {
 			slog.Any("configFile", viper.ConfigFileUsed()),
 		)
 	}
-
-	initTracer()
 }
 
 func initTracer() func(context.Context) error {

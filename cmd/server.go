@@ -49,6 +49,12 @@ to quickly create a Cobra application.`,
 			slog.Any("config", appConfig),
 		)
 
+		slog.Info("Optl config",
+			slog.String("serviceName", serviceName),
+			slog.String("collectorURL", collectorURL),
+			slog.String("insecure", insecure),
+		)
+
 		quitChannel := make(chan os.Signal, 1)
 		signal.Notify(quitChannel, syscall.SIGINT, syscall.SIGTERM)
 

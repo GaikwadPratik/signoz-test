@@ -5,21 +5,21 @@ receivers:
         endpoint: 0.0.0.0:4317
       http:
         endpoint: 0.0.0.0:4318
-  hostmetrics:
-    collection_interval: 60s
-    scrapers:
-      cpu: {}
-      disk: {}
-      load: {}
-      filesystem: {}
-      memory: {}
-      network: {}
-      paging: {}
-      process:
-        mute_process_name_error: true
-        mute_process_exe_error: true
-        mute_process_io_error: true
-      processes: {}
+  # hostmetrics:
+  #   collection_interval: 60s
+  #   scrapers:
+  #     cpu: {}
+  #     disk: {}
+  #     load: {}
+  #     filesystem: {}
+  #     memory: {}
+  #     network: {}
+  #     paging: {}
+  #     process:
+  #       mute_process_name_error: true
+  #       mute_process_exe_error: true
+  #       mute_process_io_error: true
+  #     processes: {}
   prometheus:
     config:
       global:
@@ -45,8 +45,6 @@ exporters:
     endpoint: 10.211.55.4:4317
     tls:
       insecure: true
-    headers:
-      "signoz-access-token": ${SIGNOZ_INGESTION_KEY}
   logging:
     verbosity: normal
 service:
@@ -60,7 +58,7 @@ service:
       processors: [batch]
       exporters: [otlp]
     metrics/internal:
-      receivers: [prometheus, hostmetrics]
+      receivers: [prometheus]
       processors: [resourcedetection, batch]
       exporters: [otlp]
     traces:

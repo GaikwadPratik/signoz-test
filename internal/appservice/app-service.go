@@ -1,6 +1,9 @@
 package appservice
 
-import "context"
+import (
+	"context"
+	"log/slog"
+)
 
 type app struct {
 }
@@ -14,5 +17,6 @@ func (a app) AppHandleRequest(ctx context.Context) error {
 }
 
 func (a app) AppGetVersion() string {
+	slog.Info("Received get version")
 	return "v0.0.1"
 }

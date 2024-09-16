@@ -1,13 +1,17 @@
 services:
   app:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: app-container
     ports:
-      - "80:80"
+      - "5555:5555"
     environment:
       - OTEL_TRACES_EXPORTER=otlp
-      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4317
+      - OTEL_EXPORTER_OTLP_ENDPOINT=otel-collector:4317
       - OTEL_NODE_RESOURCE_DETECTORS=env,host,os
       - OTEL_SERVICE_NAME=app-service
+      - OTEL_EXPORTER_OTLP_INSECURE=true
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /etc/localzone:/etc/localzone:ro
@@ -19,6 +23,7 @@ services:
   otel-collector:
     image: otel/opentelemetry-collector-contrib:latest
     command: ["--config", "/etc/otel-collector-config.yaml"]
+    container_name: otel-collector-container
     volumes:
       - ./otel-collector-config.yaml:/etc/otel-collector-config.yaml:ro
       - /etc/localtime:/etc/localtime:ro
@@ -29,9 +34,9 @@ services:
       - "8888:8888"
     environment:
       - OTEL_EXPORTER_OTLP_ENDPOINT=10.211.55.4:4318
+      - OTEL_EXPORTER_OTLP_INSECURE=true
     networks:
       - app-network
 
 networks:
   app-network:
-    enable_ipv6: false

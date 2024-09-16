@@ -1,5 +1,5 @@
 webserver:
-  port: 80
+  port: 5555
   timeouts:
     startwait: 2s
     graceful: 2s
