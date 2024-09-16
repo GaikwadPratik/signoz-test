@@ -114,7 +114,7 @@ func initConfig() {
 	}
 }
 
-func initTracer() func(context.Context) error {
+func initTracer(ctx context.Context) func(context.Context) error {
 	var secureOption otlptracegrpc.Option
 
 	if strings.ToLower(insecure) == "false" || insecure == "0" || strings.ToLower(insecure) == "f" {
@@ -124,7 +124,7 @@ func initTracer() func(context.Context) error {
 	}
 
 	exporter, err := otlptrace.New(
-		context.Background(),
+		ctx,
 		otlptracegrpc.NewClient(
 			secureOption,
 			otlptracegrpc.WithEndpoint(collectorURL),
@@ -140,7 +140,7 @@ func initTracer() func(context.Context) error {
 		os.Exit(1)
 	}
 	resources, err := resource.New(
-		context.Background(),
+		ctx,
 		resource.WithAttributes(
 			attribute.String("service.name", serviceName),
 			attribute.String("library.language", "go"),

@@ -10,12 +10,13 @@ import (
 	"syscall"
 	"time"
 
+	"log/slog"
+
 	"github.com/GaikwadPratik/signoztest/internal/appservice"
 	"github.com/GaikwadPratik/signoztest/internal/entity"
 	"github.com/GaikwadPratik/signoztest/internal/webserver"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"golang.org/x/exp/slog"
 )
 
 // serverCmd represents the server command
@@ -61,7 +62,7 @@ to quickly create a Cobra application.`,
 		appCtx, cancelAppCtxFn := context.WithCancel(cmd.Context())
 		defer cancelAppCtxFn()
 
-		cleanup := initTracer()
+		cleanup := initTracer(appCtx)
 		defer cleanup(appCtx)
 
 		var err error

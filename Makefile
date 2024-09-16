@@ -16,7 +16,7 @@ build:
 
 .PHONY: docker-build
 docker-build:
-	docker build --rm --no-cache -t signoz-test:latest .
+	docker build --force-rm --no-cache -t signoz-test:latest .
 
 .PHONY: docker-clean
 docker-clean:
