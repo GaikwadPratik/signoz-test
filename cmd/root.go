@@ -5,6 +5,7 @@ package cmd
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"log/slog"
 	"os"
@@ -12,7 +13,9 @@ import (
 	"time"
 
 	"github.com/GaikwadPratik/signoztest/slogger"
+	"github.com/fluent/fluent-logger-golang/fluent"
 	"github.com/mitchellh/go-homedir"
+	slogfluentd "github.com/samber/slog-fluentd"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"go.opentelemetry.io/otel"
@@ -72,10 +75,31 @@ func init() {
 }
 
 func initConfig() {
+	client, err := fluent.New(fluent.Config{
+		FluentHost:    "fluentd-container",
+		FluentPort:    24224,
+		FluentNetwork: "tcp",
+		MarshalAsJSON: true,
+		Async:         true,
+	})
+
+	if err != nil {
+		fmt.Printf("While creating client connection to fluentd container: %v\n", err)
+
+		os.Exit(1)
+	}
+
+	slogFluentdOpts := slogfluentd.Option{
+		Level:  logLevel,
+		Client: client,
+		Tag:    "api",
+	}
+
 	// Setting up slogger
 	configureLoggerOpts := slogger.ConfigLogger{
-		ProcessTitle: "signoztest",
-		LogLevel:     logLevel,
+		ProcessTitle:    "signoztest",
+		LogLevel:        logLevel,
+		SlogFluentDOpts: slogFluentdOpts,
 	}
 
 	logger := slogger.ConfigureLogger(configureLoggerOpts)

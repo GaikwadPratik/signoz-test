@@ -5,8 +5,12 @@ import (
 	"fmt"
 	"log/slog"
 	"os"
+	"reflect"
 	"strings"
 	"time"
+
+	slogfluentd "github.com/samber/slog-fluentd"
+	slogmulti "github.com/samber/slog-multi"
 )
 
 type ConfigLogger struct {
@@ -14,6 +18,8 @@ type ConfigLogger struct {
 	ProcessTitle string
 	// LogLevel minimum level of the slogger, this can be used to change level in runtime
 	LogLevel *slog.LevelVar
+	// SlogFluentDOpts options for creating fluentd fanout
+	SlogFluentDOpts slogfluentd.Option
 }
 
 // ConfigureLogger updates option on logger and returns instance
@@ -52,7 +58,15 @@ func ConfigureLogger(config ConfigLogger) *slog.Logger {
 			AddSource:   true,
 		}
 
-		return slog.New(slog.NewJSONHandler(os.Stderr, options))
+		slogHandlers := []slog.Handler{
+			slog.NewJSONHandler(os.Stderr, options),
+		}
+
+		if !reflect.ValueOf(config.SlogFluentDOpts).IsZero() {
+			slogHandlers = append(slogHandlers, config.SlogFluentDOpts.NewFluentdHandler())
+		}
+
+		return slog.New(slogmulti.Fanout(slogHandlers...))
 	}
 
 	// if not in Docker env, then config the logger to work with Bunyan

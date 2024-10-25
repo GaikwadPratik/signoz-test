@@ -15,6 +15,13 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /etc/localzone:/etc/localzone:ro
+    # logging:
+    #   driver: "fluentd"
+    #   options:
+    #     fluentd-address: 10.211.55.4:24224
+    #     tag: petclinic
+    depends_on:
+      - fluentd
     networks:
       - app-network
   
@@ -31,6 +38,22 @@ services:
     # depends_on:
     #   - otel-collector
     restart: on-failure
+    networks:
+      - app-network
+
+  fluentd:
+    container_name: fluentd-container
+    hostname: fluentd-container
+    build: 
+      context: .
+      dockerfile: Dockerfile.fluentd
+    environment:
+      - FLUENTD_CONF=fluentd.conf
+    ports:
+      - 24224:24224
+    networks:
+      - app-network
 
 networks:
   app-network:
+    enable_ipv6: false
